@@ -4,6 +4,8 @@ This proof of concept illustrates a working example of a queuing mechanism using
 For completeness, we also use postgres to show how batches of counting statistics on grocery listings can be buffered and dumped
 into a database, perhaps hooked up with Secoda even, for analytics.
 
+With more time, it would be good to explore more optimal structures for generating the counting stats.
+
 The system behaves as follows:
 
 1. The pipeline's queue routes messages (i.e. jsons of food prices) to topics based on category. We use a mocked api to mimic a real life scenario where there might be a large volume of product listings for groceries ingested.

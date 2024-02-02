@@ -92,13 +92,6 @@ class FoodPricesPipeline:
             if msg:
                 json_msg = json.loads(msg)
 
-                """
-                We use Redis again to create a durable queue where
-                listings can be processed for our counting statistics.
-                One should explore more optimized data structures
-                for our counters and aggregations.
-                """
-
                 if json_msg["category"] in self.price_categories:
                     self.redis_client.rpush(json_msg["category"], json_msg["price"])
                     self.logger.info(f" Success - Processed Message: {msg} ")
@@ -110,6 +103,8 @@ class FoodPricesPipeline:
 
     def load_to_db(self):
         for cat in self.price_categories:
+            # This pipeline is important for avoiding race conditions
+            # and wraps the range & delete in a transaction
             pipeline = self.redis_client.pipeline()
 
             pipeline.multi()
